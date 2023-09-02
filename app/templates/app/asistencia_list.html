@@ -1,0 +1,116 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Páginas{% endblock %}
+{% block content %}
+<main role="main">
+  <div class="container mb-4">
+    <table class="table table-dark caption-top">
+      <caption>
+        {% with another='0' %}
+        {% endwith %} 
+        {{ another }}
+        <div class="card text-center">
+          <div class="card-header">
+          <form class="d-flex" action="{% url 'apps:asistencialist' %}" method="GET">
+              <div class="mb-2 col-2">
+                <strong><label for="curso_select" class="form-label"><small>Curso: </small></label></strong>
+              </div>
+              <div class="mb-2 col-1">
+                  <select class="form-control form-control-sm border border-dark" name="curso_select" id="curso_select">
+                    <option value>--Todos--</option>
+                    {% for curso in cursos %}
+                        <option 
+                            value={{ curso.id }}
+                            {% if curso_select != '' and curso.id|slugify == curso_select|slugify %} selected {% endif %}
+                        >
+                          {{ curso.title }}
+                        </option>
+                    {% endfor %}
+                </select>
+              </div>
+
+              <div class="mb-2 col-2">
+                <strong><label for="asistencia_select" class="form-label"><small>Asistencia:</small></label></strong>
+              </div>
+              <div class="mb-2 col-1">
+                  <select class="form-control form-control-sm border border-dark" name="asistencia_select" id="asistencia_select">
+                    <option value>--Todos --</option>
+                    <option value='-1' {% if asistencia_select != '' and asistencia_select|slugify == -1|slugify %} selected {% endif %}>Sin Asistencia</option>
+                    <option value='0' {% if asistencia_select != '' and asistencia_select|slugify == 0|slugify %} selected {% endif %}>No Asistio</option>
+                    <option value='1' {% if asistencia_select != '' and asistencia_select|slugify == 1|slugify %} selected {% endif %}>Asistio</option>
+                </select>
+              </div>
+
+
+              <div class="mb-2 col-2">
+                <strong><label for="date" class="form-label"><small>Fecha: </small></label></strong>
+              </div>
+              <div class="mb-2 col-2">
+                {% csrf_token %}
+                <input type="date" id="date" name="date" class="form-control form-control-sm border border-dark" value={{date}}>
+              </div>
+              <div class="mb-2 col-2">
+                <button class="btn btn-sm btn-outline-dark" type="submit">Search</button>
+              </div>
+          </form>
+        </div>
+      </div>
+
+        <h4>Asistencia de Alumnos por Clase</h4>
+      </caption>
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Curso</th>
+          <th scope="col">Clase</th>
+          <th scope="col">Fecha de Clase</th>
+          <th scope="col">Alumno</th>
+          <th scope="col">Nombres</th>
+          <th scope="col">Apellidos</th>
+          <th scope="col">Asistencia</th>
+          <th scope="col">Estado del Alumno</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="myTable">
+        {% for asistencia in asistencia_list|dictsort:"id" reversed %}
+          <tr class="table-light">
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ asistencia.clase.curso.title }}</td>
+            <td>{{ asistencia.clase.title }}</td>
+            <td>{{ asistencia.clase.date_class }}</td>
+            <td>{{ asistencia.user.username }}</td>
+            <td>{{ asistencia.user.first_name }}</td>
+            <td>{{ asistencia.user.last_name }}</td>
+            <td>
+                 
+                  {% if asistencia.asistio == -1 %}
+                    Sin Asistencia
+                  {% elif asistencia.asistio == 1%} 
+                    Asistio
+                  {% else %}
+                    No Asistio
+                  {% endif %}
+
+              </td>
+            <td>
+              {% if asistencia.user.is_active %}
+                Activo
+              {% else %}
+                Inactivo
+              {% endif %}
+            </td>
+            <td>
+                {% if request.user.is_staff %}
+                  | <a href="{% url 'apps:asistencia' asistencia.id 1 curso_select asistencia_select date %}">Asistio</a>
+                  | <a href="{% url 'apps:asistencia' asistencia.id 0 curso_select asistencia_select date %}">No Asistio</a>  |
+                {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</main>
+
+{% endblock %}

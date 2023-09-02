@@ -1,0 +1,84 @@
+{% extends 'core/base.html' %}
+{% load custom_tags %}
+{% load static %}
+{% block title %}Editar Usuario{% endblock %}
+{% block content %}
+<main role="main">
+  <div class="container mb-4">
+    <div>
+      <form action="" method="post">{% csrf_token %}
+        
+       <div class="row">
+
+            <div class="mb-2 col-1">
+              <strong>
+                {{ form.email.label_tag }}
+              </strong>
+            </div>
+            <div class="mb-2 col-3">
+                {{ form.email }}
+                {% if form.email.errors %}
+                  <small id="email_error" class="form-text text-danger">{{ form.email.errors.as_text |safe }}</small>
+                {% endif %}
+            </div>
+
+            <div class="mb-2 col-1">
+                <strong>
+                  {{ form.oficina.label_tag }}
+                </strong>
+            </div>
+            <div class="mb-2 col-3">
+                {{ form.oficina }}
+            </div>
+
+            <div class="mb-2 col-1">
+              <strong>
+                {{ form.region.label_tag }}
+              </strong>
+            </div>
+            <div class="mb-2 col-3">
+              {{ form.region }}
+            </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="mb-2 col-1">
+            <strong>
+              {{ form.perfil.label_tag }}
+            </strong>
+          </div>
+          <div class="mb-2 col-3">
+            {{ form.perfil }}
+            {% if form.perfil.errors %}
+              <small id="perfil_error" class="form-text text-danger">{{ form.perfil.errors.as_text |safe }}</small>
+            {% endif %}
+          </div>
+          
+          <div class="mb-2 col-1">
+            <strong>
+              {{ form.estado.label_tag }}
+            </strong>
+          </div>
+          <div class="mb-2 col-3">
+            {{ form.estado }}
+          </div>
+
+          <div class="mb-2 col-4">
+          </div>
+
+        </div>
+
+        <div class="d-grid gap-2">
+          <input type="submit" class="btn btn-primary btn-block" value="Actualizar Usuario" />
+        </div>
+        <div class="d-grid gap-2 mt-2">
+          <a href="{% url 'seguridad:usuarioslist' %}?page={{ pagina }}" class="btn btn-primary btn-block"/>Regresar</a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</main>
+{% endblock %}

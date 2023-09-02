@@ -1,0 +1,139 @@
+{% extends 'core/base.html' %}
+{% load custom_tags %}
+{% load static %}
+{% block title %}Detalle del Perfil{% endblock %}
+{% block content %}
+<main role="main">
+  <div class="container mb-4">
+    <div>
+      <form action="" method="post">{% csrf_token %}
+
+          <div class="row">
+            <div class="mb-2 col-2">
+              <strong>
+                {{ form.nombre.label_tag }}
+              </strong>
+            </div>
+            <div class="mb-2 col-3">
+              {{ form.nombre }}
+              <small id="emailHelp" class="form-text text-muted">Ingrese solo letras y/o numeros.</small>
+              {% if form.nombre.errors %}
+                <small id="nombre_error" class="form-text text-danger">{{ form.nombre.errors.as_text |safe }}</small>
+              {% endif %}
+            </div>
+            <div class="mb-2 col-2">
+              <strong>
+                {{ form.estado.label_tag }}
+              </strong>
+            </div>
+            <div class="mb-2 col-3">
+              {{ form.estado }}
+            </div>
+            <div class="mb-2 col-1">
+              <strong>
+                {{ form.is_admin.label_tag }}
+              </strong>
+            </div>
+            <div class="mb-2 col-1 form-check form-switch">
+              {{ form.is_admin }}
+            </div>
+          </div>
+        <div class="row">
+          <div class="mb-2 col-2">
+            <strong>
+              {{ form.descripcion.label_tag }}
+            </strong>
+          </div>
+          <div class="mb-2 col-10">
+            {{ form.descripcion }}
+          </div>
+        </div>
+
+        <div class="accordion" id="accordionExample">
+          {% for menu in menu_list %}
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading{{menu.id}}">
+                <button class="accordion-button border border-primary text-primary" style="background-color:#e7f1ff;" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{menu.id}}" aria-expanded="true" aria-controls="collapseOne">
+                  {{ menu.nombre }}
+                </button>
+              </h2>
+              <div id="collapse{{menu.id}}" class="accordion-collapse collapse {{ forloop.counter | show_accordion }}" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+
+                  <table class="table">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th style="width:20%; text-align:center;" scope="col">Modules</th>
+                        <th style="width:20%; text-align:center;" scope="col">View</th>
+                        <th style="width:20%; text-align:center;" scope="col">Create</th>
+                        <th style="width:20%; text-align:center;" scope="col">Edit</th>
+                        <th style="width:20%; text-align:center;" scope="col">Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for menu_item in menu.menuitems.all %}
+                        <tr class="table-light">
+                          <td style="width:20%; text-align:left;">{{ menu_item.nombre }}</td>
+                          <td style="width:20%; text-align:center;"><input type="checkbox" onclick="ActivarCasilla(this)" value='1' name="view_{{menu.id}}_{{menu_item.id}}" id="view_{{menu.id}}_{{menu_item.id}}"/></td>
+                          <td style="width:20%; text-align:center;"><input type="checkbox" onclick="ActivarCasilla(this)" value='1' name="create_{{menu.id}}_{{menu_item.id}}" id="create_{{menu.id}}_{{menu_item.id}}"/></td>
+                          <td style="width:20%; text-align:center;"><input type="checkbox" onclick="ActivarCasilla(this)" value='1' name="update_{{menu.id}}_{{menu_item.id}}" id="update_{{menu.id}}_{{menu_item.id}}"/></td>
+                          <td style="width:20%; text-align:center;"><input type="checkbox" onclick="ActivarCasilla(this)" value='1' name="delete_{{menu.id}}_{{menu_item.id}}" id="delete_{{menu.id}}_{{menu_item.id}}"/></td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="d-grid gap-2 mt-2">
+          <input type="submit" class="btn btn-primary btn-block" value="Registrar Perfil" />
+        </div>
+        <div class="d-grid gap-2 mt-2">
+          <a href="{% url 'seguridad:perfileslist' %}" class="btn btn-primary btn-block"/>Regresar</a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</main>
+<script type="text/javascript">
+  function ActivarCasilla(casilla) 
+  {
+      id_array = casilla.id.split("_");
+      prefijo = id_array[0]
+      id_menu = id_array[1]
+      id_menuitem = id_array[2]
+
+      if(prefijo.indexOf('view') !== -1) {
+        if(!casilla.checked){
+            id_array = casilla.id.split("_");
+            uncheck('create_'+id_menu+'_'+id_menuitem)
+            uncheck('delete_'+id_menu+'_'+id_menuitem)
+            uncheck('update_'+id_menu+'_'+id_menuitem)
+        }
+      }
+
+      if(prefijo.indexOf('create') !== -1 || prefijo.indexOf('delete') !== -1 || prefijo.indexOf('update') !== -1) {
+        if(casilla.checked){
+            id_array = casilla.id.split("_");
+            check('view_'+id_menu+'_'+id_menuitem)
+        }
+      }
+
+  }
+
+  function check(id) {
+    document.getElementById(id).checked = true;
+  }
+
+  function uncheck(id) {
+      document.getElementById(id).checked = false;
+  }
+
+
+</script>
+{% endblock %}

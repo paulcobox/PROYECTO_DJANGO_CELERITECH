@@ -1,0 +1,51 @@
+{% extends 'core/base.html' %}
+{% load custom_tags %}
+{% load static %}
+{% block title %}Detalle del Usuario{% endblock %}
+{% block content %}
+<main role="main">
+  <div class="container mb-4">
+      <div>
+          <div class="row">
+            <div class="mb-2 col-1">
+              <strong><label class="form-label">Email:</label></strong>
+            </div>
+            <div class="mb-2 col-3">
+              <input type="text" name="nombres" class="form-control" maxlength="200" disabled value="{{ usuario_view.email }}"></input>
+            </div>
+            <div class="mb-2 col-1">
+              <strong><label class="form-label">Oficina:</label></strong>
+            </div>
+            <div class="mb-2 col-3">
+              <input type="text" name="apellidos" class="form-control" maxlength="200" disabled value="{{ usuario_view.get_oficina_display | default_if_none:"(N/A)" }}"></input>
+            </div>
+            <div class="mb-2 col-1">
+              <strong><label class="form-label">Region:</label></strong>
+            </div>
+            <div class="mb-2 col-3">
+              <input type="text" name="correo" class="form-control" maxlength="200" disabled value="{{ usuario_view.get_region_display | default_if_none:"(N/A)" }}"></input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mb-2 col-1">
+              <strong><label class="form-label">Perfil:</label></strong>
+            </div>
+            <div class="mb-2 col-3">
+              <input type="text" name="perfil" class="form-control" maxlength="200" disabled value="{{ usuario_view.perfil | default_if_none:"(N/A)" }}"></input>
+            </div>
+            <div class="mb-2 col-1">
+              <strong><label class="form-label">Estado:</label></strong>
+            </div>
+            <div class="mb-2 col-3">
+              <input type="text" name="estado" class="form-control" maxlength="200" disabled value="{{ usuario_view.get_estado_display | default_if_none:"(N/A)" }}"></input>
+            </div>
+            <div class="mb-2 col-4">
+            </div>
+          </div>
+          <div class="d-grid gap-2 mt-2">
+            <a href="{% url 'seguridad:usuarioslist' %}?page={{ pagina }}" class="btn btn-primary btn-block"/>Regresar</a>
+          </div>
+      </div>
+  </div>
+</main>
+{% endblock %}

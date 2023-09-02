@@ -1,0 +1,84 @@
+{% extends 'core/base.html' %}
+{% load custom_tags %}
+{% load static %}
+{% block title %}Detalle del Perfil{% endblock %}
+{% block content %}
+<main role="main">
+  <div class="container mb-4">
+      <div>
+          <div class="row">
+            <div class="mb-2 col-2">
+              <strong><label class="form-label">Nombre del Perfil:</label></strong>
+            </div>
+            <div class="mb-2 col-3">
+              <input type="text" name="nombre" class="form-control" maxlength="200" disabled value="{{ perfil_view.nombre }}"></input>
+            </div>
+            <div class="mb-2 col-2">
+              <strong><label class="form-label">Estado:</label></strong>
+            </div>
+            <div class="mb-2 col-3">
+              <input type="text" name="estado" class="form-control" maxlength="200" disabled value="{{ perfil_view.estado | desc }}"></input>
+            </div>
+            <div class="mb-2 col-1">
+              <strong><label class="form-label">Admin:</label></strong>
+            </div>
+            <div class="mb-2 col-1">
+              <input type="text" name="is_admin" class="form-control" maxlength="200" disabled value="{{ perfil_view.is_admin |yesno:"Si,No" }}"></input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mb-2 col-2">
+              <strong><label class="form-label">Descripcion:</label></strong>
+            </div>
+            <div class="mb-2 col-10">
+              <textarea name="descripcion" cols="40" rows="2" class="form-control"  disabled>{{ perfil_view.descripcion }}</textarea>
+            </div>
+          </div>
+
+          <div class="accordion" id="accordionExample">
+            {% for menu in menu_list %}
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="heading{{menu.id}}">
+                  <button class="accordion-button border border-primary text-primary" style="background-color:#e7f1ff;" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{menu.id}}" aria-expanded="true" aria-controls="collapseOne">
+                    {{ menu.nombre }}
+                  </button>
+                </h2>
+                <div id="collapse{{menu.id}}" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+  
+                    <table class="table">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th style="width:20%; text-align:center;" scope="col">Modules</th>
+                          <th style="width:20%; text-align:center;" scope="col">View</th>
+                          <th style="width:20%; text-align:center;" scope="col">Create</th>
+                          <th style="width:20%; text-align:center;" scope="col">Edit</th>
+                          <th style="width:20%; text-align:center;" scope="col">Delete</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for menu_item in menu.menuitems.all %}
+                          {% get_privilegio_menuitem menu_item.id perfil_view.id as privilegio_menuitem %}
+                          <tr class="table-light">
+                            <td style="width:20%; text-align:left;">{{ menu_item.nombre }}</td>
+                            <td style="width:20%; text-align:center;"><i class="fas {{ privilegio_menuitem.view | check_unchecked_icon }}"></i></td>
+                            <td style="width:20%; text-align:center;"><i class="fas {{ privilegio_menuitem.create | check_unchecked_icon }}"></i></td>
+                            <td style="width:20%; text-align:center;"><i class="fas {{ privilegio_menuitem.update | check_unchecked_icon }}"></i></td>
+                            <td style="width:20%; text-align:center;"><i class="fas {{ privilegio_menuitem.delete | check_unchecked_icon }}"></i></td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+           </div>
+          <div class="d-grid gap-2 mt-2">
+            <a href="{% url 'seguridad:perfileslist' %}?page={{ pagina }}" class="btn btn-primary btn-block"/>Regresar</a>
+          </div>
+      </div>
+  </div>
+</main>
+{% endblock %}

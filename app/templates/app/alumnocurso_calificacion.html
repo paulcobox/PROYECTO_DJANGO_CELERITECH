@@ -1,0 +1,139 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Páginas{% endblock %}
+{% block content %}
+<main role="main">
+  <div class="container mb-4">
+    <table class="table table-dark caption-top">
+      <caption>
+        <div class="card text-center">
+          <div class="card-header">
+            {% if 'ok' in request.GET %}
+              <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                Se Registro la Nota Exitosamente
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endif %}
+            <form class="d-flex" action="{% url 'apps:calificacionlist' %}" method="GET">
+                <div class="mb-2 col-4">
+                  <strong><label for="curso_select" class="form-label"><small>Curso: </small></label></strong>
+                </div>
+                <div class="mb-2 col-4">
+                    <select class="form-control form-control-sm border border-dark" name="curso_select" id="curso_select">
+                      <option value>--Todos--</option>
+                      {% for curso in cursos %}
+                          <option 
+                              value={{ curso.id }}
+                              {% if curso_select and curso.id == curso_select %} selected {% endif %}
+                          >
+                            {{ curso.title }}
+                          </option>
+                      {% endfor %}
+                  </select>
+                </div>
+                {% csrf_token %}
+                <div class="mb-2 col-4">
+                  <button class="btn btn-sm btn-outline-dark" type="submit">Search</button>
+                </div>
+            </form>
+          </div>
+        </div>
+
+
+        <h4>Calificacion de Alumnos</h4>
+      </caption>
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Curso</th>
+          <th scope="col">Alumno</th>
+          <th scope="col">Nombres</th>
+          <th scope="col">Apellidos</th>
+          <th scope="col">P1</th>
+          <th scope="col">P2</th>
+          <th scope="col">P3</th>
+          <th scope="col">P4</th>
+          <th scope="col">EP</th>
+          <th scope="col">EF</th>
+          <th scope="col">ES</th>
+          <th scope="col">PC</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="myTable">
+        {% for alumnocurso in alumnocurso_list %}
+          <tr class="table-light">
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ alumnocurso.titulo }}</td>
+            <td>{{ alumnocurso.alumno }}</td>
+            <td>{{ alumnocurso.first_name }}</td>
+            <td>{{ alumnocurso.last_name }}</td>
+            <td>
+              {% if alumnocurso.P1 == -1  %}
+                -
+              {% else %}
+               {{ alumnocurso.P1 }}
+              {% endif %}
+            </td>
+            <td>
+              {% if alumnocurso.P2 == -1  %}
+                -
+              {% else %}
+               {{ alumnocurso.P2 }}
+              {% endif %}
+            </td>
+            <td>
+              {% if alumnocurso.P3 == -1  %}
+                -
+              {% else %}
+               {{ alumnocurso.P3 }}
+              {% endif %}
+            </td>
+            <td>
+              {% if alumnocurso.P4 == -1  %}
+                -
+              {% else %}
+               {{ alumnocurso.P4 }}
+              {% endif %}
+            </td>
+            <td>
+              {% if alumnocurso.EP == -1  %}
+                -
+              {% else %}
+               {{ alumnocurso.EP }}
+              {% endif %}
+            </td>
+            <td>
+              {% if alumnocurso.EF == -1  %}
+                -
+              {% else %}
+               {{ alumnocurso.EF }}
+              {% endif %}
+            </td>
+            <td>
+              {% if alumnocurso.ES == -1  %}
+                -
+              {% else %}
+               {{ alumnocurso.ES }}
+              {% endif %}
+            </td>
+            <td>
+              {% if alumnocurso.PC == -1  %}
+                -
+              {% else %}
+               {{ alumnocurso.PC }}
+              {% endif %}
+            </td>
+            <td>
+                {% if request.user.is_staff %}
+                  | <a href="{% url 'apps:create_asistencia' alumnocurso.id alumnocurso.curso_id%}">Calificar</a> | 
+                {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</main>
+
+{% endblock %}

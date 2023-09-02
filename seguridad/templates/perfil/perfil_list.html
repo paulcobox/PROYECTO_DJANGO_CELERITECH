@@ -1,0 +1,88 @@
+{% extends 'core/base.html' %}
+{% load custom_tags %}
+{% load static %}
+{% block title %}Páginas{% endblock %}
+{% block content %}
+<main role="main">
+  <div class="container mb-4">
+    <table class="table table-dark caption-top">
+      <caption>
+            <div>
+              <div> <h4>Lista de Perfiles</h4></div>
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a style="width:160px;" href="{% url 'seguridad:perfilcreate' %}" class="btn btn-dark me-md-2" role="button" aria-pressed="true"><i class="fa fa-plus"></i>  Agregar Perfil</a>
+              </div>
+            </div>
+      </caption>
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col" style="text-align: center">Nombre</th>
+          <th scope="col" style="text-align: center">Admin</th>
+          <th scope="col" style="text-align: center">Estado</th>
+          <th scope="col" style="text-align: center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="myTable">
+        {% for perfil in perfil_list|dictsort:"id" reversed %}
+          <tr class="table-light">
+            <th scope="row">{{ forloop.counter | get_num_registro:page_obj.number }}</th>
+            <td style="width:20%; text-align:center;">{{ perfil.nombre }}</td>
+            <td style="width:20%; text-align:center;">{{ perfil.is_admin |yesno:"Si,No"}}</td>
+            <td style="width:20%; text-align:center;">
+                {% if perfil.is_active %}
+                  <form id="desa_{{ perfil.id }}" action="{% url 'seguridad:perfil_desactivate' perfil.id %}" method="POST">
+                      {% csrf_token %}
+                      <button type="submit" style="width:95px;" class="btn btn-sm btn-success">{{ perfil.estado | desc }}</button>
+                  </form>
+                {% elif perfil.is_desactive %}
+                  <form id="acti_{{ perfil.id }}" action="{% url 'seguridad:perfil_activate' perfil.id %}" method="POST">
+                      {% csrf_token %}
+                      <button type="submit" style="width:95px;" class="btn btn-sm btn-danger">{{ perfil.estado | desc }}</button>
+                  </form>
+                {% endif  %}
+            </td>
+            <td style="width:20%; text-align:center;">
+              <div class="btn-group" role="group" aria-label="Basic example">
+                  <a href="{% url 'seguridad:perfilview' perfil.id page_obj.number %}" class="btn btn-sm btn-secondary"><i class="fa fa-glasses"></i></a>
+                  <a href="{% url 'seguridad:perfilupdate' perfil.id page_obj.number %}" class="btn btn-sm btn-secondary"><i class="fa fa-edit"></i></a>
+                  <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                    data-id="{{perfil.id}}"
+                    data-name="{{perfil.nombre}}" 
+                    data-pagina="{{page_obj.number}}" 
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
+                    <i class="fa fa-trash"></i>
+                  </button>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% include 'perfil/includes/pagination.html'%}
+  </div>
+</main>
+<!-- Modal Confirmacion delete -->
+{% include 'perfil/fragment/_modal_perfil_delete.html'%}
+<script type="text/javascript">
+  window.onload= function(){
+
+    $('#deleteModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var name = button.data('name') // Extract info from data-* attributes
+        var idPerfil = button.data('id') // Extract info from data-* attributes
+        var pagina = button.data('pagina') // Extract info from data-* attributes
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this)
+        modal.find('.modal-title span').text(name)
+
+        $("#deletePerfil").attr("action","/seguridad/perfildelete/")
+        $("#idDeletePerfil").attr("value",idPerfil)
+        $("#pagina").attr("value",pagina)
+
+        
+    })
+  }
+</script>
+{% endblock %}
